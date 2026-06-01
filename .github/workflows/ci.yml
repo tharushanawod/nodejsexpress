@@ -44,9 +44,11 @@ jobs:
     steps:
       - name: Trigger Render Deployment
         run: |
-          curl --request POST \
-            --url https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_DEPLOY_KEY }} \
-            --header 'content-type: application/json'
+          curl -v --request POST \
+            --url "https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_DEPLOY_KEY }}" \
+            --header 'content-type: application/json' \
+            --output response.txt
+          cat response.txt
         continue-on-error: false
 
       - name: Deployment Confirmation
