@@ -1,4 +1,4 @@
-name: CI Build and Test
+name: CI/CD Build, Test & Deploy
 
 on:
   push:
@@ -32,4 +32,20 @@ jobs:
 
       - name: Test Summary
         if: always()
-        run: echo "Build and test pipeline completed successfully!"
+        run: echo " Build and test pipeline completed successfully!"
+
+  deploy-to-render:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Trigger Render Deployment
+        run: |
+          curl --request POST \
+            --url https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_DEPLOY_KEY }} \
+            --header 'content-type: application/json'
+        continue-on-error: false
+
+      - name: Deployment Confirmation
+        run: echo " Deployment to Render initiated successfully!"
